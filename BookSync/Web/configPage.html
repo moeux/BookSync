@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>BookSync Configuration Page</title>
+</head>
+<body>
+<div class="page type-interior pluginConfigurationPage"
+     data-require="emby-input,emby-button,emby-checkbox,emby-checkbox-label"
+     data-role="page"
+     id="PluginConfigPage">
+    <div data-role="content">
+        <div class="content-primary">
+            <h2>BookSync Settings</h2>
+
+            <form id="PluginConfigForm">
+                <h3>General</h3>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="Interval">Interval</label>
+                    <input class="emby-input" id="Interval" is="emby-input" min="1" type="number"/>
+                    <div class="fieldDescription">Sets the day interval of the syncs.</div>
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="ExcludedTags">Excluded Tags</label>
+                    <input id="ExcludedTags" is="emby-input" type="text"/>
+                    <div class="fieldDescription">
+                        Add tags to exclude local media from the syncs, seperated by a comma.
+                    </div>
+                </div>
+
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input class="emby-checkbox"
+                               id="DeleteReadCloudMedia"
+                               is="emby-checkbox"
+                               name="DeleteReadCloudMedia"
+                               type="checkbox"/>
+                        <span>Delete Read Cloud Media</span>
+                    </label>
+                    <div class="fieldDescription">Whether to delete fully read media from the cloud.</div>
+                </div>
+
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input class="emby-checkbox"
+                               id="DeleteReadLocalMedia"
+                               is="emby-checkbox"
+                               name="DeleteReadLocalMedia"
+                               type="checkbox"/>
+                        <span>Delete Read Local Media</span>
+                    </label>
+                    <div class="fieldDescription">Whether to delete fully read media from the local library.</div>
+                </div>
+
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input class="emby-checkbox"
+                               id="DeleteAfterSync"
+                               is="emby-checkbox"
+                               name="DeleteAfterSync"
+                               type="checkbox"/>
+                        <span>Delete After Sync</span>
+                    </label>
+                    <div class="fieldDescription">Whether to delete local media after syncing it to the cloud.
+                    </div>
+                </div>
+
+                <h3>PocketBook Cloud</h3>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="Username">Username</label>
+                    <input id="Username" is="emby-input" type="text"/>
+                    <div class="fieldDescription">
+                        Your PocketBook Cloud username.
+                    </div>
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="Password">Password</label>
+                    <input id="Password" is="emby-input" type="password"/>
+                    <div class="fieldDescription">
+                        Your PocketBook Cloud password.
+                    </div>
+                </div>
+
+                <h3>Advanced Settings</h3>
+                <h5>WARNING: Only change these values if you know what you are doing!</h5>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="ClientId">Client ID</label>
+                    <input id="ClientId" is="emby-input" type="password"/>
+                    <div class="fieldDescription">
+                        The PocketBook Cloud Client ID.
+                    </div>
+                </div>
+
+                <div class="inputContainer">
+                    <label class="inputLabel inputLabelUnfocused" for="ClientSecret">Client Secret</label>
+                    <input id="ClientSecret" is="emby-input" type="password"/>
+                    <div class="fieldDescription">
+                        The PocketBook Cloud Client Secret.
+                    </div>
+                </div>
+
+                <div>
+                    <button class="raised button-submit block emby-button"
+                            data-theme="b"
+                            is="emby-button"
+                            type="submit">
+                        <span>Save</span>
+                    </button>
+                    <button class="raised button-cancel block btnCancel emby-button"
+                            is="emby-button"
+                            onclick="history.back();"
+                            type="button">
+                        <span>Cancel</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const PluginConfig = {
+            pluginUniqueId: 'c63c0e7b-f545-4192-b0f6-8108e0aff584'
+        };
+
+        document.querySelector('#PluginConfigPage')
+            .addEventListener('pageshow', function () {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(PluginConfig.pluginUniqueId).then(function (config) {
+                    document.querySelector('#Interval').value = config.Interval;
+                    document.querySelector('#ExcludedTags').value = config.ExcludedTags;
+                    document.querySelector('#DeleteReadCloudMedia').checked = config.DeleteReadCloudMedia;
+                    document.querySelector('#DeleteReadLocalMedia').checked = config.DeleteReadLocalMedia;
+                    document.querySelector('#DeleteAfterSync').checked = config.DeleteAfterSync;
+                    document.querySelector('#Username').value = config.Username;
+                    document.querySelector('#Password').value = config.Password;
+                    document.querySelector('#ClientId').value = config.ClientId;
+                    document.querySelector('#ClientSecret').value = config.ClientSecret;
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+        document.querySelector('#PluginConfigForm')
+            .addEventListener('submit', function (e) {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(PluginConfig.pluginUniqueId).then(function (config) {
+                    config.Interval = document.querySelector('#Interval').value;
+                    config.ExcludedTags = document.querySelector('#ExcludedTags').value;
+                    config.DeleteReadCloudMedia = document.querySelector('#DeleteReadCloudMedia').checked;
+                    config.DeleteReadLocalMedia = document.querySelector('#DeleteReadLocalMedia').checked;
+                    config.DeleteAfterSync = document.querySelector('#DeleteAfterSync').checked;
+                    config.Username = document.querySelector('#Username').value;
+                    config.Password = document.querySelector('#Password').value;
+                    config.ClientId = document.querySelector('#ClientId').value;
+                    config.ClientSecret = document.querySelector('#ClientSecret').value;
+
+                    ApiClient.updatePluginConfiguration(PluginConfig.pluginUniqueId, config).then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    });
+                });
+
+                e.preventDefault();
+                return false;
+            });
+    </script>
+</div>
+</body>
+</html>
