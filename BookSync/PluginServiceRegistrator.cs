@@ -15,7 +15,7 @@ public class PluginServiceRegistrator : IPluginServiceRegistrator
 
         serviceCollection.AddHttpClient(
             authorizationClientName,
-            client => { client.BaseAddress = new Uri("https://cloud.pocketbook.digital/api/v1.0/auth/login"); });
+            client => { client.BaseAddress = new Uri("https://cloud.pocketbook.digital/api/v1.0/auth/"); });
 
         serviceCollection.AddTransient<AuthorizationHandler>();
 

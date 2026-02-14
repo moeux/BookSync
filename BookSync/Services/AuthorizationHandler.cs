@@ -15,7 +15,11 @@ public class AuthorizationHandler(ILogger<AuthorizationHandler> logger, IHttpCli
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        if (!_login.IsExpired) return await base.SendAsync(request, cancellationToken);
+        if (!_login.IsExpired)
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _login.AccessToken);
+            return await base.SendAsync(request, cancellationToken);
+        }
 
         using var client = httpClientFactory.CreateClient($"{nameof(PocketBookClient)}-AuthorizationClient");
         var pocketBookProvider = await GetProvider(client, cancellationToken);
@@ -44,7 +48,7 @@ public class AuthorizationHandler(ILogger<AuthorizationHandler> logger, IHttpCli
 
     private static async Task<Login?> Login(Provider provider, HttpClient client, CancellationToken cancellationToken)
     {
-        var uri = $"/{HttpUtility.UrlEncode(provider.Alias)}";
+        var uri = $"login/{HttpUtility.UrlEncode(provider.Alias)}";
         using var content = new FormUrlEncodedContent(new Dictionary<string, string>
         {
             { "shop_id", provider.ShopId },
@@ -62,7 +66,7 @@ public class AuthorizationHandler(ILogger<AuthorizationHandler> logger, IHttpCli
 
     private static async Task<Provider?> GetProvider(HttpClient client, CancellationToken cancellationToken)
     {
-        var uri = $"?username={BookSync.PluginConfiguration.Username}&" +
+        var uri = $"login?username={BookSync.PluginConfiguration.Username}&" +
                   $"client_id={BookSync.PluginConfiguration.ClientId}&" +
                   $"client_secret={BookSync.PluginConfiguration.ClientSecret}&" +
                   $"language=en";
