@@ -27,4 +27,9 @@
         </Compile>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="Web\configPage.html"/>
+        <EmbeddedResource Include="Web\configPage.html"/>
+    </ItemGroup>
+
 </Project>
