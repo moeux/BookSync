@@ -1,0 +1,12 @@
+{
+    "category": "General",
+    "changelog": "Version 1.0.0",
+    "description": "This plugin automatically syncs your books.",
+    "guid": "c63c0e7b-f545-4192-b0f6-8108e0aff584",
+    "name": "BookSync",
+    "overview": "Sync your books",
+    "owner": "moeux",
+    "targetAbi": "10.11.6.0",
+    "timestamp": "2026-02-14T20:39:15Z",
+    "version": "1.0.0"
+}
