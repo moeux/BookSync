@@ -21,7 +21,7 @@ public class PocketBookClient(ILogger<PocketBookClient> logger, IHttpClientFacto
         if (uploadResponse.IsSuccessStatusCode)
             logger.LogInformation("Successfully uploaded media '{File}'.", fileName);
         else
-            logger.LogError("Failed to upload media '{File}'.", fileName);
+            logger.LogError("Failed to upload media '{File}' ({StatusCode}).", fileName, uploadResponse.StatusCode);
 
         return uploadResponse.IsSuccessStatusCode;
     }
